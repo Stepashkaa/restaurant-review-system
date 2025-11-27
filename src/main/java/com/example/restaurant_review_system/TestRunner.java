@@ -17,12 +17,12 @@ public class TestRunner implements CommandLineRunner {
     @Override
     public void run(String... args) {
         System.out.println("Все посетители:");
-        visitorService.findAll().forEach(System.out::println);
+        visitorService.getAll().forEach(System.out::println);
 
         System.out.println("\nВсе рестораны:");
-        restaurantService.findAll().forEach(System.out::println);
+        restaurantService.getAll().forEach(System.out::println);
 
         System.out.println("\nВсе оценки:");
-        reviewService.findAll().forEach(System.out::println);
+        reviewService.getAll().forEach(System.out::println);
     }
 }
