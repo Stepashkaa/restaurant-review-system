@@ -15,8 +15,8 @@ public class RestaurantReviewSystemApplication {
         VisitorService visitorService = context.getBean(VisitorService.class);
         RestaurantService restaurantService = context.getBean(RestaurantService.class);
 
-        System.out.println("Количество посетителей: " + visitorService.findAll().size());
-        System.out.println("Количество ресторанов: " + restaurantService.findAll().size());
+        System.out.println("Количество посетителей: " + visitorService.getAll().size());
+        System.out.println("Количество ресторанов: " + restaurantService.getAll().size());
 	}
 
 }
