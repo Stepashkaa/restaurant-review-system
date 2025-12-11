@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -84,5 +85,16 @@ public class ReviewController {
         } else {
             return ResponseEntity.notFound().build();
         }
+    }
+
+    @GetMapping("/page")
+    @Operation(summary = "Получить отзывы постранично, отсортированные по оценке (от высокой к низкой)")
+    public Page<ReviewResponseDTO> getPageSortedByScoreDesc(
+            @Parameter(description = "Номер страницы (с 0)", example = "0")
+            @RequestParam(defaultValue = "0") int page,
+            @Parameter(description = "Размер страницы", example = "10")
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        return reviewService.getPageSortedByScoreDesc(page, size);
     }
 }
