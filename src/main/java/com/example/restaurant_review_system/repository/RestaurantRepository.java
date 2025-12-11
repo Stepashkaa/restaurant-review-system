@@ -1,5 +1,6 @@
 package com.example.restaurant_review_system.repository;
 import com.example.restaurant_review_system.entity.Restaurant;
+import com.example.restaurant_review_system.entity.Visitor;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
@@ -22,5 +23,12 @@ public class RestaurantRepository {
 
     public List<Restaurant> findAll() {
         return Collections.unmodifiableList(restaurants);
+    }
+
+    public Restaurant findById(Long id){
+        return restaurants.stream()
+                .filter(r -> r.getId().equals(id))
+                .findFirst()
+                .orElse(null);
     }
 }

@@ -23,4 +23,11 @@ public class VisitorRepository {
     public List<Visitor> findAll() {
         return Collections.unmodifiableList(visitors);
     }
+
+    public Visitor findById(Long id){
+        return visitors.stream()
+                .filter(v -> v.getId().equals(id))
+                .findFirst()
+                .orElse(null);
+    }
 }
