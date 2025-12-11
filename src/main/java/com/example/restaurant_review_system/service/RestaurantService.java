@@ -19,13 +19,6 @@ public class RestaurantService {
     private final RestaurantRepository restaurantRepository;
     private final RestaurantMapper restaurantMapper;
 
-    private long generateNewId() {
-        return restaurantRepository.findAll().stream()
-                .mapToLong(Restaurant::getId)
-                .max()
-                .orElse(0L) + 1L;
-    }
-
     public List<RestaurantResponseDTO> getAll() {
         return restaurantRepository.findAll().stream()
                 .map(restaurantMapper::toResponseDto)
@@ -33,55 +26,54 @@ public class RestaurantService {
     }
 
     public Optional<RestaurantResponseDTO> getById(Long id) {
-        Restaurant restaurant = restaurantRepository.findById(id);
-        return Optional.ofNullable(restaurant)
+        return restaurantRepository.findById(id)
                 .map(restaurantMapper::toResponseDto);
     }
 
     public RestaurantResponseDTO create(RestaurantRequestDTO dto) {
         Restaurant restaurant = restaurantMapper.toEntity(dto);
 
-        restaurant.setId(generateNewId());
+        restaurant.setId(null);
         restaurant.setRatingUser(BigDecimal.ZERO);
 
-        restaurantRepository.save(restaurant);
-        return restaurantMapper.toResponseDto(restaurant);
+        Restaurant saved = restaurantRepository.save(restaurant);
+        return restaurantMapper.toResponseDto(saved);
     }
 
     public Optional<RestaurantResponseDTO> update(Long id, RestaurantRequestDTO dto) {
-        Restaurant existing = restaurantRepository.findById(id);
-
-        if (existing == null) {
-            return Optional.empty();
-        }
-
-        restaurantMapper.updateEntityFromDto(dto, existing);
-
-        restaurantRepository.remove(existing);
-        restaurantRepository.save(existing);
-
-        return Optional.of(restaurantMapper.toResponseDto(existing));
+        return restaurantRepository.findById(id)
+                .map(existing -> {
+                    restaurantMapper.updateEntityFromDto(dto, existing);
+                    Restaurant saved = restaurantRepository.save(existing);
+                    return restaurantMapper.toResponseDto(saved);
+                });
     }
 
     public boolean delete(Long id) {
-        Restaurant existing = restaurantRepository.findById(id);
-
-        if (existing == null) {
+        if (!restaurantRepository.existsById(id)) {
             return false;
         }
-
-        restaurantRepository.remove(existing);
+        restaurantRepository.deleteById(id);
         return true;
     }
 
     public void updateRating(Long restaurantId, BigDecimal newRating) {
-        Restaurant existing = restaurantRepository.findById(restaurantId);
+        restaurantRepository.findById(restaurantId)
+                .ifPresent(r -> {
+                    r.setRatingUser(newRating);
+                    restaurantRepository.save(r);
+                });
+    }
 
-        if (existing != null) {
-            existing.setRatingUser(newRating);
+    public List<RestaurantResponseDTO> findByMinRating(BigDecimal minRating) {
+        return restaurantRepository.findByRatingUserGreaterThanEqual(minRating).stream()
+                .map(restaurantMapper::toResponseDto)
+                .toList();
+    }
 
-                restaurantRepository.remove(existing);
-                restaurantRepository.save(existing);
-        }
+    public List<RestaurantResponseDTO> findByMinRatingUsingQuery(BigDecimal minRating) {
+        return restaurantRepository.findWithMinRating(minRating).stream()
+                .map(restaurantMapper::toResponseDto)
+                .toList();
     }
 }

@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.net.URI;
 import java.util.List;
 
@@ -74,5 +75,23 @@ public class RestaurantController {
         } else {
             return ResponseEntity.notFound().build();
         }
+    }
+
+    @GetMapping("/search/min-rating/convention")
+    @Operation(summary = "Найти рестораны с рейтингом не ниже заданного (по имени метода)")
+    public List<RestaurantResponseDTO> getByMinRatingConvention(
+            @Parameter(description = "Минимальный рейтинг", example = "4.0")
+            @RequestParam("minRating") BigDecimal minRating
+    ) {
+        return restaurantService.findByMinRating(minRating);
+    }
+
+    @GetMapping("/search/min-rating/query")
+    @Operation(summary = "Найти рестораны с рейтингом не ниже заданного (через @Query JPQL)")
+    public List<RestaurantResponseDTO> getByMinRatingQuery(
+            @Parameter(description = "Минимальный рейтинг", example = "4.0")
+            @RequestParam("minRating") BigDecimal minRating
+    ) {
+        return restaurantService.findByMinRatingUsingQuery(minRating);
     }
 }

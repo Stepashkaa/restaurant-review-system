@@ -1,37 +1,22 @@
 package com.example.restaurant_review_system.repository;
 
 import com.example.restaurant_review_system.entity.Review;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
-public class ReviewRepository {
+public interface ReviewRepository extends JpaRepository<Review, Review.ReviewPk> {
 
-    private final List<Review> reviews = new ArrayList<>();
+    Optional<Review> findByVisitorIdAndRestaurantId(Long visitorId, Long restaurantId);
 
-    public void save(Review review) {
-        reviews.removeIf(r ->
-                r.getVisitorId().equals(review.getVisitorId())
-                    && r.getRestaurantId().equals(review.getRestaurantId()));
+    List<Review> findAllByRestaurantId(Long restaurantId);
 
-        reviews.add(review);
-    }
-
-    public void remove(Review review){
-        reviews.removeIf(r -> r.getVisitorId().equals(review.getVisitorId()) && r.getRestaurantId().equals(review.getRestaurantId()));
-    }
-
-    public List<Review> findAll(){
-        return Collections.unmodifiableList(reviews);
-    }
-
-    public Review findById(Long visitorId, Long restaurantId){
-        return reviews.stream()
-                .filter(r -> r.getVisitorId().equals(visitorId) && r.getRestaurantId().equals(restaurantId))
-                .findFirst()
-                .orElse(null);
-    }
+    Page<Review> findAll(Pageable pageable);
 }

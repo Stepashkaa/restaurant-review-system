@@ -4,6 +4,7 @@ import com.example.restaurant_review_system.dto.review.ReviewRequestDTO;
 import com.example.restaurant_review_system.dto.review.ReviewResponseDTO;
 import com.example.restaurant_review_system.entity.Review;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
 @Mapper(componentModel = "spring")
@@ -13,5 +14,7 @@ public interface ReviewMapper {
 
     ReviewResponseDTO toResponseDto(Review entity);
 
+    @Mapping(target = "visitorId", ignore = true)
+    @Mapping(target = "restaurantId", ignore = true)
     void updateEntityFromDto(ReviewRequestDTO dto, @MappingTarget Review entity);
 }
