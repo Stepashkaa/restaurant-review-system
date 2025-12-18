@@ -30,6 +30,10 @@ public class RestaurantService {
                 .map(restaurantMapper::toResponseDto);
     }
 
+    public Optional<Restaurant> findEntityById(Long id) {
+        return restaurantRepository.findById(id);
+    }
+
     public RestaurantResponseDTO create(RestaurantRequestDTO dto) {
         Restaurant restaurant = restaurantMapper.toEntity(dto);
 
