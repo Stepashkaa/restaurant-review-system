@@ -29,6 +29,10 @@ public class VisitorService {
                 .map(visitorMapper::toResponseDto);
     }
 
+    public Optional<Visitor> findEntityById(Long id) {
+        return visitorRepository.findById(id);
+    }
+
     public VisitorResponseDTO create(VisitorRequestDTO dto) {
         Visitor visitor = visitorMapper.toEntity(dto);
         visitor.setId(null);
